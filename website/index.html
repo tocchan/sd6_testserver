@@ -1,0 +1,129 @@
+<html>
+
+<head>
+   <title>SD6 Test</title>
+   <link rel="stylesheet" type="text/css" href="style/packet.css" />
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+   <script type="text/javascript">
+      var gDebugPort = "3443";
+
+
+      $(document).ready(function () {
+
+         var addr = "ws://localhost:" + gDebugPort;
+         var conn = new WebSocket(addr);
+         alert(conn.url + ", " + );
+
+         conn.onclose = function (e) {
+            alert("Connection Closed: " + e.reason);
+         }
+
+         conn.onopen = function () {
+            alert("Connected");
+         };
+
+         conn.onmessage = function (e) {
+            alert("Received message: " + e.data);
+         };
+
+         conn.onerror = function (e) {
+            alert("Error: " + e)
+         };
+
+
+
+         // Setup the IP
+         var test = $("#title .ip").text("Hello World");
+
+         $("#clear").click(function () {
+            $(".packet").remove();
+         });
+
+         $("#add").click(function () {
+            AddPacket( "#ffffff", "TCP/IP", "127.0.0.1", 80, 128, "DE EA BE EF" );
+         });
+      });
+
+
+
+      function AddPacket( color, type, ip, port, size, content )
+      {
+         var date = new Date();
+
+         // Create a new element
+         var html = "<div class='packet' style='background:"
+            + color + "'><div class='header'><div class='type'>" 
+            + type
+            + "</div><div class='from'><span class='ip'>"
+            + ip 
+            + "</span>:<span class='port'>" 
+            + 1623 
+            + "</span></div><div class='size'>"
+            + "<span class='date'>"
+            + date.toTimeString()
+            + "</span> "
+            + size
+            + "B</div></div><div class='content'>"
+            + content 
+            + "</div></div>";
+         var div = $("#packets").prepend(html).children().first();
+         div.hide();
+         div.slideDown(250);
+
+         // Clear out elements if we have too many.
+         var packets = $(".packet");
+         var len = packets.size();
+         if (packets.size() > 32) {
+            $(packets.get(packets.size() - 1)).remove();
+         }
+      }
+
+   </script>
+</head>
+
+<body>
+
+   <div id='incoming'>
+      <div id='incoming_header'>
+         <div id='title'>
+            <span class='ip'>127.0.0.1</span>:<span class='port'>16325</span>
+         </div>
+         <div id='options'>
+            <a href='#' id='add'>add</a> |
+            <a href='#' id='clear'>clear</a>
+         </div>
+      </div>
+
+      <div id='packets'>
+         <div class='packet'>
+            <div class='header'>
+               <div class='type'>TCP/IP</div>
+               <div class='from'><span class='ip'>127.0.0.1</span>:<span class='port'>1623</span></div>
+               <div class='size'>128B</div>
+            </div>
+            <div class='content'>
+               0001 0203 0405 0607 0809 0a0b 0c0d 0e0f 0001 0203 0405 0607 0809 0a0b 0c0d 0e0f<br />
+               0001 0203 0405 0607 0809
+            </div>
+         </div>
+
+         <div class='packet'>
+            <div class='header'>
+               <div class='type'>TCP/IP</div>
+               <div class='from'><span class='ip'>127.0.0.1</span>:<span class='port'>1623</span></div>
+               <div class='size'>128B</div>
+            </div>
+            <div class='content'>
+               0001 0203 0405 0607 0809 0a0b 0c0d 0e0f 0001 0203 0405 0607 0809 0a0b 0c0d 0e0f<br />
+               0001 0203 0405 0607 0809
+            </div>
+         </div>
+      </div>
+   </div>
+
+   <div onclick="
+
+</body>
+
+</html>

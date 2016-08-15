@@ -1,0 +1,88 @@
+body {
+   background-color: #161640;
+
+   padding: 10px 20px;
+
+   font-family: Tohoma, Verdana, Geneva, Tahoma, sans-serif;
+}
+
+#incoming {
+   width: 800px;
+}
+
+#incoming_header {
+   position: relative;
+   color: black;
+
+   background-color: #d07030;
+
+   padding: 4px 8px;
+}
+
+#title {
+   font-weight: bold;
+   font-size: 24px;
+   width: 400px;
+   display: inline-block;
+}
+
+#options {
+   position: absolute;
+   right: 8px;
+   bottom: 4px;
+   text-align: right;
+   vertical-align: bottom;
+}
+
+#packets {
+   background-color: #d07030;
+   padding: 4px 8px;
+   margin: 4px 0px;
+}
+
+.ip { 
+   color: #333399;
+}
+
+.port {
+   color: #990000;
+}
+
+.packet {
+   background-color: #ffffff;
+   padding: 2px 4px;
+
+   margin: 1px 0px;
+
+}
+
+.header {
+   font-weight: bold;
+   font-size: 16px;
+}
+
+.type {
+   float: left;
+   width: 100px;
+}
+
+.from {
+   float: left;
+}
+
+.size {
+   text-align: right;
+}
+
+.date {
+   color: #999999;
+   font-weight: normal;
+   font-size: 14px;
+}
+
+.content {
+   font-family: "Lucida Console", Monaco, monospace;
+   font-size: 14px;
+   padding: 2px 8px;
+}
+
