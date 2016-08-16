@@ -7,34 +7,42 @@
 
    <script type="text/javascript">
       var gDebugPort = "3443";
-
+      var gTCPPort = "4325";
+      var gConnection = null;
 
       $(document).ready(function () {
 
-         var addr = "ws://localhost:" + gDebugPort;
+         var addr = "ws://localhost:" + gDebugPort + "/debug";
          var conn = new WebSocket(addr);
-         alert(conn.url + ", " + );
+         $("#status").text("connecting")
 
          conn.onclose = function (e) {
-            alert("Connection Closed: " + e.reason);
+            $("#status").text("disconnected")
          }
 
          conn.onopen = function () {
-            alert("Connected");
+            $("#status").text("connected")
          };
 
          conn.onmessage = function (e) {
+            var msg = JSON.parse(e.data);
             alert("Received message: " + e.data);
+            for (var property in msg) {
+               if (msg.hasOwnProperty(property)) {
+                  alert("Prop: " + property); // do stuff
+               }
+            }
          };
 
          conn.onerror = function (e) {
-            alert("Error: " + e)
+            // alert("Error: " + e)
          };
 
-
+         gConnection = conn;
 
          // Setup the IP
-         var test = $("#title .ip").text("Hello World");
+         $("#title .ip").text("localhost");
+         $("#title .port").text(gTCPPort);
 
          $("#clear").click(function () {
             $(".packet").remove();
@@ -90,6 +98,7 @@
             <span class='ip'>127.0.0.1</span>:<span class='port'>16325</span>
          </div>
          <div id='options'>
+            <span id="status">disconnected</span> |
             <a href='#' id='add'>add</a> |
             <a href='#' id='clear'>clear</a>
          </div>
