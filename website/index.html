@@ -10,6 +10,28 @@
       var gTCPPort = "4325";
       var gConnection = null;
 
+      function GetDataCount(str) {
+         return str.length / 2;
+      }
+
+      function FormatData(str) {
+         var ret = "";
+         var j = 0;
+         for (i = 0; i < str.length; i += 2) {
+            ret += str.substring(i, i + 2).toUpperCase() + " ";
+            
+            // Add a line break every sixteen bytes
+            ++j;
+            if ((j % 32) == 0) {
+               ret += "<br />";
+            } else if ((j % 8) == 0) {
+               ret += "&nbsp;";
+            }
+         }
+
+         return ret;
+      }
+
       $(document).ready(function () {
 
          var addr = "ws://localhost:" + gDebugPort + "/debug";
@@ -26,12 +48,27 @@
 
          conn.onmessage = function (e) {
             var msg = JSON.parse(e.data);
-            alert("Received message: " + e.data);
-            for (var property in msg) {
-               if (msg.hasOwnProperty(property)) {
-                  alert("Prop: " + property); // do stuff
-               }
+
+            // JOIN, LEAVE, DATA
+            var colors = ["#00cc99","#ff9999","#ccffff"];
+            var color = colors[msg.MsgType]
+
+            // Get type from message
+            var types = ["TCP/IP", "UDP/IP"];
+            var type = types[msg.ConnType];
+
+            var addr_parts = msg.Addr.split(":");
+            var addr = msg.Addr;
+            var port = "";
+            if (addr.length > 1) {
+               addr = addr_parts[0];
+               port = addr_parts[1];
             }
+
+            var data_count = GetDataCount(msg.Data)
+            var formatted_data = FormatData(msg.Data);
+
+            AddPacket( color, type, addr, port, data_count, formatted_data );
          };
 
          conn.onerror = function (e) {
@@ -61,18 +98,23 @@
 
          // Create a new element
          var html = "<div class='packet' style='background:"
-            + color + "'><div class='header'><div class='type'>" 
+            + color + "'><div class='header'><div class='type'>"
             + type
             + "</div><div class='from'><span class='ip'>"
-            + ip 
-            + "</span>:<span class='port'>" 
-            + 1623 
+            + ip
+            + "</span>:<span class='port'>"
+            + 1623
             + "</span></div><div class='size'>"
             + "<span class='date'>"
             + date.toTimeString()
-            + "</span> "
-            + size
-            + "B</div></div><div class='content'>"
+            + "</span> ";
+
+         if (size > 0) {
+            html += size
+            + "B";
+         }
+         
+         html += "</div></div><div class='content'>"
             + content 
             + "</div></div>";
          var div = $("#packets").prepend(html).children().first();

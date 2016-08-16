@@ -29,11 +29,13 @@ var gServerConn net.Conn
 // Addr String
 // Size
 // Content
+
+// ONLY MEMBERS WITH CAPITAL LETTERS EXPORT!  THANKS GO!
 type DebugMessage struct {
-   conn_type int `json:"conn_type"`
-	msg_type int `json:"msg_type"`
-	addr     string `json:"addr"`
-	data     string `json:"data"`
+   ConnType int 
+	MsgType 	int 
+	Addr     string 
+	Data     string 
 }
 
 type DebugRoom struct {
@@ -44,9 +46,10 @@ type DebugRoom struct {
 }
 
 //----------------------------------------------------------------------------------
-func (room *DebugRoom) SendMessage(msg *DebugMessage) {
+func (room *DebugRoom) SendMessage(msg DebugMessage) {
 	for i := 0; i < len(room.connections); i += 1 {
 		conn := room.connections[0]
+
 		err := websocket.JSON.Send(conn, msg)
       if (err != nil) {
          room.outgoing <- conn
@@ -77,7 +80,7 @@ func (room *DebugRoom) DoWork() {
          fmt.Println( "Removing debug connection: " + conn.LocalAddr().String() )
          room.RemoveConnection(conn)
 		case msg := <-room.messages:
-			room.SendMessage(msg)
+			room.SendMessage(*msg)
 		}
 	}
 }
@@ -99,7 +102,11 @@ func DebugServerWork(msgs chan *DebugMessage) {
 	on_connect := func(ws *websocket.Conn) {
 		room.incoming <- ws
 
+		test_data := []byte{ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 
+			25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 230, 254, 255 }
+
       AddMessage(msgs, CONN_TCP, MSG_JOIN, nil, nil, 0)
+      AddMessage(msgs, CONN_TCP, MSG_DATA, nil, test_data, len(test_data))
 
       // If this function leaves - the connection closes I think
       buffer := make([]byte, 512)
@@ -128,20 +135,20 @@ func DebugServerWork(msgs chan *DebugMessage) {
 //----------------------------------------------------------------------------------
 func AddMessage(msgs chan *DebugMessage, ctype int, mtype int, conn net.Conn, data []byte, data_size int) {
 	msg := DebugMessage{
-		msg_type: mtype,
-      conn_type: ctype,
-		addr:     "invalid",
-		data:     "",
+		MsgType:  mtype,
+   	ConnType: ctype,
+		Addr:     "invalid",
+		Data:     "",
 	}
 
    if (conn != nil) {
-      msg.addr = conn.LocalAddr().String()
+      msg.Addr = conn.LocalAddr().String()
    }
 
 	if data != nil {
       buffer := make([]byte,2048)
 		n := hex.Encode(buffer, data)
-      msg.data = string(buffer[:n])
+      msg.Data = string(buffer[:n])
 	}
 
 	msgs <- &msg
